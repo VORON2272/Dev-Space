@@ -1,4 +1,4 @@
-# 💻 DevPortfolio
+# 💻 Dev Space
 
 ![DevPortfolio Logo](https://projectencelada.ru/extensions/resourcemanager/uploads/1766330801_Purple%20and%20Black%20Bold%20Typographic%20Web%20Design%20Logo%20(2).png)
 
