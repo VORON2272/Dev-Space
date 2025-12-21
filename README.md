@@ -1,7 +1,7 @@
 # 🚀 Dev Space
 
 <p align="center">
-  <img src="https://projectencelada.ru/extensions/resourcemanager/uploads/1766330801_Purple%20and%20Black%20Bold%20Typographic%20Web%20Design%20Logo%20(2).png" width="200">
+  <img src="https://projectencelada.ru/extensions/resourcemanager/uploads/1766330801_Purple%20and%20Black%20Bold%20Typographic%20Web%20Design%20Logo%20(2).png" width="600">
 </p>
 
 ## 📌 Описание проекта
