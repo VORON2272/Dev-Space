@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Dev Space</title>
+    <link rel="icon" type="image/png" href="../Misc/Dev-Space.png">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+
+        <div class="panel">
+            <h2>Настройки</h2>
+
+            <div class="field">
+                <span>Ваше Имя:</span>
+                <input type="text" id="inp-name" placeholder="Имя Фамилия">
+            </div>
+            <div class="field">
+                <span>О себе:</span>
+                <textarea id="inp-about" placeholder="Напишите немного о себе..."></textarea>
+            </div>
+            <div class="field">
+                <span>Аватарка:</span>
+                <input type="file" id="inp-photo" accept="image/*">
+            </div>
+            <div class="field">
+                <span>Telegram:</span>
+                <input type="text" id="inp-tg" placeholder="https://t.me/...">
+            </div>
+            <div class="field">
+                <span>VK:</span>
+                <input type="text" id="inp-vk" placeholder="https://vk.com/...">
+            </div>
+            <div class="field">
+                <span>GitHub:</span>
+                <input type="text" id="inp-gh" placeholder="https://github.com/...">
+            </div>
+            <div class="field">
+                <span>Цвет фона:</span>
+                <select id="sel-grad">
+                    <option value="grad1">Сине-фиолетовый</option>
+                    <option value="grad2">Красно-оранжевый</option>
+                    <option value="grad3">Зелено-голубой</option>
+                    <option value="grad4">Темно-серый</option>
+                </select>
+            </div>
+            <div class="field">
+                <span>Расположение:</span>
+                <select id="sel-lay">
+                    <option value="lay1">Классика (по центру)</option>
+                    <option value="lay2">Аватар слева</option>
+                    <option value="lay3">Аватар справа</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <span>Проекты:</span>
+                <div id="project-list"></div>
+                <button id="btn-add" class="btn green">+ Добавить проект</button>
+            </div>
+
+            <button id="btn-save" class="btn blue">Сохранить и Скачать</button>
+        </div>
+
+        <div class="preview">
+            <div id="site" class="site grad1 lay1">
+                <div class="card">
+                    <img id="out-photo" src="" alt="" style="display:none">
+                    <div class="info">
+                        <h1 id="out-name">Имя Фамилия</h1>
+                        <p id="out-about">Тут будет текст о вас...</p>
+                        <div class="socials">
+                            <a id="out-tg" href="#" target="_blank" style="display:none"><i class="fi-brands-telegram"></i> Telegram</a>
+                            <a id="out-vk" href="#" target="_blank" style="display:none"><i class="fi-brands-vk"></i> VK</a>
+                            <a id="out-gh" href="#" target="_blank" style="display:none"><i class="fi-brands-github"></i> GitHub</a>
+                        </div>
+                    </div>
+                </div>
+                <div id="out-projects" class="projects"></div>
+            </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
