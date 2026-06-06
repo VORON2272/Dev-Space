@@ -1,8 +1,8 @@
 // Onboarding Modal
-if(!localStorage.getItem('devspace_onboarding_done')) {
+if (!localStorage.getItem('devspace_onboarding_done')) {
     document.getElementById('onboarding-modal').style.display = 'flex';
 }
-document.getElementById('btn-start-tour').onclick = function() {
+document.getElementById('btn-start-tour').onclick = function () {
     document.getElementById('onboarding-modal').style.display = 'none';
     localStorage.setItem('devspace_onboarding_done', 'true');
 }
@@ -34,13 +34,20 @@ syncText('inp-title', 'out-title', 'Frontend Developer');
 syncText('inp-about', 'out-about', 'Тут будет текст о вас...');
 
 // Social Links Sync
-const syncSocial = (inpId, outId) => {
+const syncSocial = (inpId, outId, isMail = false, isTel = false) => {
     const inp = document.getElementById(inpId);
     const out = document.getElementById(outId);
     inp.addEventListener('input', () => {
-        if(inp.value.trim() !== "") {
+        const val = inp.value.trim();
+        if (val !== "") {
             out.style.display = ""; // clears inline display so css handles it (inline-flex or block)
-            out.href = inp.value.trim();
+            if (isMail) {
+                out.href = "mailto:" + val;
+            } else if (isTel) {
+                out.href = "tel:" + val.replace(/[^0-9+]/g, '');
+            } else {
+                out.href = val;
+            }
         } else {
             out.style.display = "none";
         }
@@ -50,15 +57,29 @@ const syncSocial = (inpId, outId) => {
 syncSocial('inp-tg', 'out-tg');
 syncSocial('inp-gh', 'out-gh');
 syncSocial('inp-li', 'out-li');
+syncSocial('inp-email', 'out-email', true, false);
+syncSocial('inp-phone', 'out-phone', false, true);
+
+// CV Link
+const cvInp = document.getElementById('inp-cv');
+const cvOut = document.getElementById('out-cv');
+cvInp.addEventListener('input', () => {
+    if (cvInp.value.trim() !== "") {
+        cvOut.style.display = "inline-block";
+        cvOut.href = cvInp.value.trim();
+    } else {
+        cvOut.style.display = "none";
+    }
+});
 
 // Avatar
 let currentAvatarData = "";
-document.getElementById('inp-photo').onchange = function(evt) {
-    if(!evt.target.files || evt.target.files.length === 0) return;
+document.getElementById('inp-photo').onchange = function (evt) {
+    if (!evt.target.files || evt.target.files.length === 0) return;
     let fl = evt.target.files[0];
-    if(fl.type.indexOf("image/") !== 0) return;
+    if (fl.type.indexOf("image/") !== 0) return;
     let reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         currentAvatarData = e.target.result;
         document.getElementById('out-photo').src = currentAvatarData;
         document.getElementById('out-photo').style.display = "block";
@@ -72,15 +93,15 @@ const renderSkills = () => {
     const list = document.getElementById('skills-list');
     const outList = document.getElementById('out-skills');
     const outSection = document.getElementById('section-skills');
-    
+
     list.innerHTML = "";
     outList.innerHTML = "";
-    
-    if(skills.length === 0) {
+
+    if (skills.length === 0) {
         outSection.style.display = "none";
         return;
     }
-    
+
     outSection.style.display = "block";
     skills.forEach((sk, idx) => {
         // Edit panel
@@ -88,14 +109,14 @@ const renderSkills = () => {
         tag.className = 'tag-item';
         tag.innerHTML = `${sk} <span class="del-tag" data-idx="${idx}">&times;</span>`;
         list.appendChild(tag);
-        
+
         // Preview
         const outTag = document.createElement('div');
         outTag.className = 'out-skill';
         outTag.innerText = sk;
         outList.appendChild(outTag);
     });
-    
+
     document.querySelectorAll('.del-tag').forEach(btn => {
         btn.onclick = (e) => {
             skills.splice(e.target.dataset.idx, 1);
@@ -107,16 +128,15 @@ const renderSkills = () => {
 document.getElementById('btn-add-skill').onclick = () => {
     const inp = document.getElementById('inp-skill-name');
     const val = inp.value.trim();
-    if(val) {
+    if (val) {
         skills.push(val);
         inp.value = "";
         renderSkills();
     }
 };
 
-// Listen to enter key for skill add
-document.getElementById('inp-skill-name').addEventListener('keypress', function(e) {
-    if(e.key === 'Enter') {
+document.getElementById('inp-skill-name').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
         e.preventDefault();
         document.getElementById('btn-add-skill').click();
     }
@@ -129,15 +149,15 @@ const renderExp = () => {
     const list = document.getElementById('exp-list');
     const outList = document.getElementById('out-exp');
     const outSection = document.getElementById('section-exp');
-    
+
     list.innerHTML = "";
     outList.innerHTML = "";
-    
-    if(expList.length === 0) {
+
+    if (expList.length === 0) {
         outSection.style.display = "none";
         return;
     }
-    
+
     outSection.style.display = "block";
     expList.forEach((exp) => {
         // Panel UI
@@ -154,12 +174,12 @@ const renderExp = () => {
             <textarea class="field exp-inp-desc" placeholder="Описание...">${exp.desc}</textarea>
         `;
         list.appendChild(item);
-        
+
         // Listeners for live sync
         item.querySelector('.exp-inp-date').oninput = (e) => { exp.date = e.target.value; updateOutExp(); };
         item.querySelector('.exp-inp-title').oninput = (e) => { exp.title = e.target.value; updateOutExp(); };
         item.querySelector('.exp-inp-desc').oninput = (e) => { exp.desc = e.target.value; updateOutExp(); };
-        
+
         item.querySelector('.del-btn').onclick = () => {
             expList = expList.filter(x => x.id !== exp.id);
             renderExp();
@@ -186,7 +206,7 @@ const updateOutExp = () => {
     const outList = document.getElementById('out-exp');
     outList.innerHTML = "";
     expList.forEach(exp => {
-        if(exp.title || exp.desc || exp.date) {
+        if (exp.title || exp.desc || exp.date) {
             const outItem = document.createElement('div');
             outItem.className = 'out-exp-item';
             outItem.innerHTML = `
@@ -212,15 +232,15 @@ const renderProjects = () => {
     const list = document.getElementById('project-list');
     const outList = document.getElementById('out-projects');
     const outSection = document.getElementById('section-projects');
-    
+
     list.innerHTML = "";
     outList.innerHTML = "";
-    
-    if(projects.length === 0) {
+
+    if (projects.length === 0) {
         outSection.style.display = "none";
         return;
     }
-    
+
     outSection.style.display = "block";
     projects.forEach((proj) => {
         const item = document.createElement('div');
@@ -238,19 +258,19 @@ const renderProjects = () => {
             <input type="file" class="field proj-file" accept="image/*">
         `;
         list.appendChild(item);
-        
+
         item.querySelector('.proj-name').oninput = (e) => { proj.name = e.target.value; updateOutProj(); };
         item.querySelector('.proj-desc').oninput = (e) => { proj.desc = e.target.value; updateOutProj(); };
         item.querySelector('.proj-link').oninput = (e) => { proj.link = e.target.value; updateOutProj(); };
-        
+
         item.querySelector('.proj-file').onchange = (e) => {
-            if(e.target.files[0]) {
+            if (e.target.files[0]) {
                 const r = new FileReader();
                 r.onload = (re) => { proj.img = re.target.result; updateOutProj(); };
                 r.readAsDataURL(e.target.files[0]);
             }
         };
-        
+
         item.querySelector('.del-btn').onclick = () => {
             projects = projects.filter(x => x.id !== proj.id);
             renderProjects();
@@ -277,14 +297,14 @@ const updateOutProj = () => {
     const outList = document.getElementById('out-projects');
     outList.innerHTML = "";
     projects.forEach(proj => {
-        if(proj.name || proj.desc) {
+        if (proj.name || proj.desc) {
             const outItem = document.createElement('div');
             outItem.className = 'proj';
             let html = "";
-            if(proj.img) html += `<img src="${proj.img}" alt="Screenshot">`;
-            if(proj.name) html += `<h3>${proj.name}</h3>`;
-            if(proj.desc) html += `<p>${proj.desc}</p>`;
-            if(proj.link) html += `<a href="${proj.link}" target="_blank" class="link-btn">Смотреть проект</a>`;
+            if (proj.img) html += `<img src="${proj.img}" alt="Screenshot">`;
+            if (proj.name) html += `<h3>${proj.name}</h3>`;
+            if (proj.desc) html += `<p>${proj.desc}</p>`;
+            if (proj.link) html += `<a href="${proj.link}" target="_blank" class="link-btn">Смотреть проект</a>`;
             outItem.innerHTML = html;
             outList.appendChild(outItem);
         }
@@ -304,20 +324,43 @@ const updateSiteClasses = () => {
     const theme = document.getElementById('sel-theme').value;
     const anim = document.getElementById('sel-anim') ? document.getElementById('sel-anim').value : 'anim-none';
     siteContainer.className = `site ${theme} ${anim}`;
-    
+
     // In editor preview, just make everything visible instantly to avoid confusion
     document.querySelectorAll('.proj, .out-exp-item, .out-skill').forEach(el => el.classList.add('visible'));
 };
 
 document.getElementById('sel-theme').onchange = updateSiteClasses;
 
-if(document.getElementById('sel-anim')) {
+if (document.getElementById('sel-anim')) {
     document.getElementById('sel-anim').onchange = updateSiteClasses;
 }
 
 document.getElementById('sel-font').onchange = (e) => {
     siteContainer.style.fontFamily = e.target.value;
 };
+
+// Primary Color change
+document.getElementById('inp-color').addEventListener('input', (e) => {
+    siteContainer.style.setProperty('--primary-color', e.target.value);
+});
+
+// Mobile Preview Toggle
+const btnDesktop = document.getElementById('btn-desktop-view');
+const btnMobile = document.getElementById('btn-mobile-view');
+const previewContainer = document.getElementById('preview-container');
+
+btnDesktop.addEventListener('click', () => {
+    btnDesktop.classList.add('active');
+    btnMobile.classList.remove('active');
+    previewContainer.classList.remove('mobile-view');
+});
+
+btnMobile.addEventListener('click', () => {
+    btnMobile.classList.add('active');
+    btnDesktop.classList.remove('active');
+    previewContainer.classList.add('mobile-view');
+});
+
 
 // Ensure initially updated
 updateSiteClasses();
@@ -346,7 +389,7 @@ document.getElementById('btn-save').addEventListener('click', () => {
                     console.warn("Could not read stylesheet", e);
                 }
             }
-            if(styles) {
+            if (styles) {
                 generateHTML(styles);
             } else {
                 alert('Пожалуйста, запустите редактор через локальный веб-сервер, чтобы функция экспорта работала корректно.');
@@ -355,23 +398,29 @@ document.getElementById('btn-save').addEventListener('click', () => {
 });
 
 function generateHTML(baseCSS) {
-    // Only extract the THEMES FOR PREVIEW AND EXPORT section to avoid exporting editor UI styles
+    // Only extract the THEMES FOR PREVIEW AND EXPORT section
     let exportCSS = baseCSS;
-    if(baseCSS.includes('/* ========================================================')) {
+    if (baseCSS.includes('/* ========================================================')) {
         exportCSS = baseCSS.split('/* ========================================================')[1];
     }
-    
+
     const fontLink = `<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">`;
     const iconsLink = `<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css">`;
-    
+
     const siteContent = document.getElementById('site').cloneNode(true);
     siteContent.removeAttribute('id');
-    
-    // In exported HTML, we want the body to be the container
+
+    // Configs
     const selectedTheme = document.getElementById('sel-theme').value;
     const selectedFont = document.getElementById('sel-font').value;
     const selectedAnim = document.getElementById('sel-anim') ? document.getElementById('sel-anim').value : 'anim-none';
-    
+    const primaryColor = document.getElementById('inp-color').value;
+
+    const pageTitle = document.getElementById('inp-name').value || 'Портфолио';
+    const pageSubtitle = document.getElementById('inp-title').value || '';
+    const seoDesc = document.getElementById('inp-seo-desc').value.trim().replace(/"/g, '&quot;');
+    const seoTag = seoDesc ? `<meta name="description" content="${seoDesc}">` : '';
+
     let observerScript = "";
     if (selectedAnim !== 'anim-none') {
         observerScript = `
@@ -392,17 +441,19 @@ function generateHTML(baseCSS) {
         });
     </script>`;
     }
-    
+
     const htmlTemplate = `<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${document.getElementById('inp-name').value || 'Портфолио'} - ${document.getElementById('inp-title').value || ''}</title>
+    <title>${pageTitle} - ${pageSubtitle}</title>
+    ${seoTag}
     ${fontLink}
     ${iconsLink}
     <style>
         body { margin: 0; padding: 0; overflow-x: hidden; font-family: ${selectedFont}; }
+        :root { --primary-color: ${primaryColor}; }
         /* Exported Styles */
         ${exportCSS}
     </style>
@@ -421,5 +472,5 @@ function generateHTML(baseCSS) {
     document.body.appendChild(linkElement);
     linkElement.click();
     document.body.removeChild(linkElement);
-    URL.revokeObjectURL(objectUrl);
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
 }
