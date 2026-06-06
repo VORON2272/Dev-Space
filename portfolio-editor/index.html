@@ -2,86 +2,162 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Dev Space</title>
-    <link rel="icon" type="image/png" href="../Misc/Dev-Space.png">
+    <title>Dev Space - Редактор</title>
+    <!-- Использование data URI для предотвращения ошибки 404 для favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css">
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="wrap">
 
+    <!-- Onboarding Modal -->
+    <div id="onboarding-modal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <h2>Добро пожаловать в Dev Space! 🚀</h2>
+            <p>Это конструктор портфолио для IT-специалистов. Здесь вы можете легко и быстро создать свой личный сайт-визитку.</p>
+            <ul>
+                <li>⚙️ Используйте панель слева для настройки данных, добавления навыков и проектов.</li>
+                <li>🎨 Выбирайте готовые темы оформления во вкладке "Дизайн".</li>
+                <li>💾 Нажмите "Сохранить и Скачать", чтобы получить готовый HTML-файл, который можно загрузить на GitHub Pages или любой хостинг.</li>
+            </ul>
+            <button id="btn-start-tour" class="btn green">Начать работу!</button>
+        </div>
+    </div>
+
+    <div class="wrap">
         <div class="panel">
             <h2>Настройки</h2>
-
-            <div class="field">
-                <span>Ваше Имя:</span>
-                <input type="text" id="inp-name" placeholder="Имя Фамилия">
-            </div>
-            <div class="field">
-                <span>О себе:</span>
-                <textarea id="inp-about" placeholder="Напишите немного о себе..."></textarea>
-            </div>
-            <div class="field">
-                <span>Аватарка:</span>
-                <input type="file" id="inp-photo" accept="image/*">
-            </div>
-            <div class="field">
-                <span>Telegram:</span>
-                <input type="text" id="inp-tg" placeholder="https://t.me/...">
-            </div>
-            <div class="field">
-                <span>VK:</span>
-                <input type="text" id="inp-vk" placeholder="https://vk.com/...">
-            </div>
-            <div class="field">
-                <span>GitHub:</span>
-                <input type="text" id="inp-gh" placeholder="https://github.com/...">
-            </div>
-            <div class="field">
-                <span>Цвет фона:</span>
-                <select id="sel-grad">
-                    <option value="grad1">Сине-фиолетовый</option>
-                    <option value="grad2">Красно-оранжевый</option>
-                    <option value="grad3">Зелено-голубой</option>
-                    <option value="grad4">Темно-серый</option>
-                </select>
-            </div>
-            <div class="field">
-                <span>Расположение:</span>
-                <select id="sel-lay">
-                    <option value="lay1">Классика (по центру)</option>
-                    <option value="lay2">Аватар слева</option>
-                    <option value="lay3">Аватар справа</option>
-                </select>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tab-main">Основное</button>
+                <button class="tab-btn" data-tab="tab-skills">Навыки</button>
+                <button class="tab-btn" data-tab="tab-exp">Опыт</button>
+                <button class="tab-btn" data-tab="tab-projects">Проекты</button>
+                <button class="tab-btn" data-tab="tab-design">Дизайн</button>
             </div>
 
-            <div class="field">
-                <span>Проекты:</span>
+            <div class="tab-content active" id="tab-main">
+                <div class="field">
+                    <span>Ваше Имя:</span>
+                    <input type="text" id="inp-name" placeholder="Имя Фамилия">
+                </div>
+                <div class="field">
+                    <span>Профессия / Заголовок:</span>
+                    <input type="text" id="inp-title" placeholder="Frontend Developer">
+                </div>
+                <div class="field">
+                    <span>О себе:</span>
+                    <textarea id="inp-about" placeholder="Напишите немного о себе..."></textarea>
+                </div>
+                <div class="field">
+                    <span>Аватарка:</span>
+                    <input type="file" id="inp-photo" accept="image/*">
+                </div>
+                <div class="field">
+                    <span>Telegram:</span>
+                    <input type="text" id="inp-tg" placeholder="https://t.me/...">
+                </div>
+                <div class="field">
+                    <span>GitHub:</span>
+                    <input type="text" id="inp-gh" placeholder="https://github.com/...">
+                </div>
+                <div class="field">
+                    <span>LinkedIn:</span>
+                    <input type="text" id="inp-li" placeholder="https://linkedin.com/in/...">
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-skills">
+                <p class="help-text">Добавьте ваши ключевые навыки (например: HTML, CSS, JavaScript, React, Python).</p>
+                <div class="field">
+                    <div style="display:flex; gap: 8px;">
+                        <input type="text" id="inp-skill-name" placeholder="Название навыка" style="flex:1;">
+                        <button id="btn-add-skill" class="btn blue" style="width: auto; margin-top: 0;">Добавить</button>
+                    </div>
+                </div>
+                <div id="skills-list" class="tags-list"></div>
+            </div>
+
+            <div class="tab-content" id="tab-exp">
+                <p class="help-text">Опишите свой опыт работы или обучение.</p>
+                <div id="exp-list"></div>
+                <button id="btn-add-exp" class="btn outline">+ Добавить опыт</button>
+            </div>
+
+            <div class="tab-content" id="tab-projects">
                 <div id="project-list"></div>
-                <button id="btn-add" class="btn green">+ Добавить проект</button>
+                <button id="btn-add" class="btn outline">+ Добавить проект</button>
             </div>
 
-            <button id="btn-save" class="btn blue">Сохранить и Скачать</button>
+            <div class="tab-content" id="tab-design">
+                <div class="field">
+                    <span>Тема оформления:</span>
+                    <select id="sel-theme">
+                        <option value="theme-glass">Glassmorphism (Современная)</option>
+                        <option value="theme-minimal">Minimalist (Минимализм)</option>
+                        <option value="theme-terminal">Terminal (Консоль)</option>
+                        <option value="theme-split">Developer Split (Разделенный экран)</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <span>Шрифт:</span>
+                    <select id="sel-font">
+                        <option value="'Inter', sans-serif">Inter (Современный)</option>
+                        <option value="'Roboto', sans-serif">Roboto (Классический)</option>
+                        <option value="'Fira Code', monospace">Fira Code (Моноширинный)</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <span>Анимация появления карточек:</span>
+                    <select id="sel-anim">
+                        <option value="anim-none">Без анимации</option>
+                        <option value="anim-fade">Fade In (Плавное появление)</option>
+                        <option value="anim-slide">Slide Up (Выезд снизу)</option>
+                        <option value="anim-zoom">Zoom In (Увеличение)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="btn-save" class="btn green" style="margin-top: 20px;">Сохранить и Скачать</button>
         </div>
 
         <div class="preview">
-            <div id="site" class="site grad1 lay1">
-                <div class="card">
-                    <img id="out-photo" src="" alt="" style="display:none">
-                    <div class="info">
-                        <h1 id="out-name">Имя Фамилия</h1>
-                        <p id="out-about">Тут будет текст о вас...</p>
-                        <div class="socials">
-                            <a id="out-tg" href="#" target="_blank" style="display:none"><i class="fi-brands-telegram"></i> Telegram</a>
-                            <a id="out-vk" href="#" target="_blank" style="display:none"><i class="fi-brands-vk"></i> VK</a>
-                            <a id="out-gh" href="#" target="_blank" style="display:none"><i class="fi-brands-github"></i> GitHub</a>
+            <div id="site" class="site theme-glass" style="font-family: 'Inter', sans-serif;">
+                <div class="site-content">
+                    <div class="hero-section card">
+                        <img id="out-photo" src="" alt="Avatar" style="display:none">
+                        <div class="info">
+                            <h1 id="out-name">Имя Фамилия</h1>
+                            <h2 id="out-title">Frontend Developer</h2>
+                            <p id="out-about">Тут будет текст о вас...</p>
+                            <div class="socials">
+                                <a id="out-tg" href="#" target="_blank" style="display:none"><i class="fi-brands-telegram"></i> Telegram</a>
+                                <a id="out-gh" href="#" target="_blank" style="display:none"><i class="fi-brands-github"></i> GitHub</a>
+                                <a id="out-li" href="#" target="_blank" style="display:none"><i class="fi-brands-linkedin"></i> LinkedIn</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="main-content">
+                        <div class="section" id="section-skills" style="display:none;">
+                            <h3 class="section-title">Навыки</h3>
+                            <div id="out-skills" class="out-skills-container"></div>
+                        </div>
+
+                        <div class="section" id="section-exp" style="display:none;">
+                            <h3 class="section-title">Опыт и Образование</h3>
+                            <div id="out-exp" class="out-exp-container"></div>
+                        </div>
+
+                        <div class="section" id="section-projects" style="display:none;">
+                            <h3 class="section-title">Проекты</h3>
+                            <div id="out-projects" class="projects"></div>
                         </div>
                     </div>
                 </div>
-                <div id="out-projects" class="projects"></div>
             </div>
         </div>
-
     </div>
     <script src="script.js"></script>
 </body>
